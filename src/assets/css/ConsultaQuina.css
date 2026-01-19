@@ -1,0 +1,55 @@
+.consultaQuina{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    justify-content: flex-end;
+}
+.busca {
+    display: flex;
+    gap: 25px;
+    padding: 25px 35px;
+    align-items: center;
+    justify-content: flex-end;
+}
+.meuCard {
+    width: 50rem;
+    padding: 10px;
+    margin: 0 auto;
+    text-align: center;
+}
+.concurso-data {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin: 0 auto;
+    text-align: center;
+}
+.dezenas {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin: 0;
+    justify-content: center;
+}
+.dezenas li {
+    list-style: none;
+    color: white;
+    align-content: center;
+    background-color: #260085;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+.resultado-acoes {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+.padding-10 {
+    padding: 10px;
+}
