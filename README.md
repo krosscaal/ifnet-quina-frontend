@@ -16,6 +16,14 @@ Este projeto é uma aplicação frontend desenvolvida com React e TypeScript par
 - ESLint
 - E outras dependências conforme listado no package.json
 
+## 💻 Projeto Back-end Relacionado
+
+Este front-end foi desenvolvido para atuar com  à seguinte aplicação back-end:
+*   **Repositório Back-end:** [infnet-quina-backend](https://github.com/krosscaal/infnet-quina-backend)
+
+
+
+
 ## Como Começar
 
 ### Pré-requisitos
