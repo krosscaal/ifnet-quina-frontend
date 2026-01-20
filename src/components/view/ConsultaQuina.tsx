@@ -5,7 +5,7 @@ import type { QuinaData } from "../../types/QuinaData.ts";
 import '../../assets/css/ConsultaQuina.css';
 
 export function ConsultaQuina() {
-    const API_CAIXA = 'http://localhost:8080/aposta/quina';
+    const API_CAIXA = 'http://localhost:8080/api/quina';
     const navigate = useNavigate();
 
     const [errorApi, setErrorApi] = useState(false);

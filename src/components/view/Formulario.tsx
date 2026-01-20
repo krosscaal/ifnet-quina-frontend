@@ -155,7 +155,6 @@ export function Formulario() {
     // Excluir pessoa
     const handleDelete = (id: number) => {
         if (globalThis.confirm('Deseja realmente excluir este registro?')) {
-            // setPessoa(pessoa.filter(pessoa => pessoa.id !== id));
         }
         fetch(`${API}/${id}`, {
             method: 'DELETE',
