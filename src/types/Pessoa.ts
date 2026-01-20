@@ -21,3 +21,10 @@ export interface PessoaFormData {
     num4: string;
     num5: string;
 }
+
+export interface PessoaRequest {
+    nome: string;
+    email: string;
+    phone: string;
+    aposta: string[];
+}

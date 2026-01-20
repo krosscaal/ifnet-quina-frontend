@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { Pessoa, PessoaFormData } from "../../types/Pessoa.ts";
+import {useEffect, useState} from 'react';
+import type {Pessoa, PessoaFormData, PessoaRequest} from "../../types/Pessoa.ts";
 import { Util } from "../utils/Util.ts";
 import { List } from "./Lista.tsx";
 import '../../assets/css/Formulario.css';
@@ -19,7 +19,32 @@ export function Formulario() {
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
-    const [nextId, setNextId] = useState<number>(1);
+    const API = 'http://localhost:8080/jogador';
+    const TOKEN = 'Bearer ' + localStorage.getItem('token');
+
+    // Função para buscar jogadores
+    const fetchJogadores = async () => {
+        try {
+            const response = await fetch(API+'/todos', {
+                headers: {
+                    method: 'GET',
+                    'Authorization': TOKEN
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Falha ao buscar jogadores');
+            }
+            const data: Pessoa[] = await response.json();
+            setPessoa(data);
+        } catch (err) {
+            console.error('Erro ao buscar jogadores:', err);
+        }
+    };
+
+    // Buscar jogadores ao montar o componente
+    useEffect(() => {
+        fetchJogadores();
+    }, []);
 
     // Adicionar nova pessoa
     const handleAdd = (e: React.FormEvent) => {
@@ -37,14 +62,34 @@ export function Formulario() {
             return;
         }
 
-        const newPessoa: Pessoa = {
-            id: nextId,
-            ...formData
-        };
+        const newPessoaRequest: PessoaRequest = {
+            nome: formData.nome,
+            email: formData.email,
+            phone: formData.phone,
+            aposta: [formData.num1, formData.num2, formData.num3, formData.num4, formData.num5]
+        }
 
-        setPessoa([...pessoa, newPessoa]);
-        setNextId(nextId + 1);
-        resetForm();
+        fetch(API, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': TOKEN
+            },
+            body: JSON.stringify(newPessoaRequest)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Falha ao cadastrar jogador');
+                }
+                return response.json();
+            })
+            .then(() => {
+                fetchJogadores();
+                resetForm();
+            })
+            .catch(err => {
+                alert(err.message);
+            });
     };
 
     // Editar pessoa existente
@@ -77,20 +122,50 @@ export function Formulario() {
             alert('Por favor, preencha todos os campos!');
             return;
         }
+        const updatePessoaRequest: PessoaRequest = {
+            nome: formData.nome,
+            email: formData.email,
+            phone: formData.phone,
+            aposta: [formData.num1, formData.num2, formData.num3, formData.num4, formData.num5]
+        }
 
-        setPessoa(pessoa.map(pessoa =>
-            pessoa.id === editingId
-                ? { ...pessoa, ...formData }
-                : pessoa
-        ));
+        fetch(`${API}/alterar/${editingId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': TOKEN
+            },
+            body: JSON.stringify(updatePessoaRequest)
+        })
+            .then(response => {
+            if (!response.ok) {
+                throw new Error('Falha ao atualizar jogador');
+            }
+            return response.json();
+        })
+            .then(() => {
+            fetchJogadores();
+        })
+            .catch(err => {
+            alert(err.message);
+        })
         resetForm();
     };
 
     // Excluir pessoa
     const handleDelete = (id: number) => {
         if (globalThis.confirm('Deseja realmente excluir este registro?')) {
-            setPessoa(pessoa.filter(pessoa => pessoa.id !== id));
+            // setPessoa(pessoa.filter(pessoa => pessoa.id !== id));
         }
+        fetch(`${API}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': TOKEN
+            },
+        }).then(() => {
+            fetchJogadores();
+        });
     };
 
     // Resetar formulário

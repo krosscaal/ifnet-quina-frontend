@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import {useNavigate} from 'react-router-dom';
 import { Util } from "../utils/Util.ts";
 import type { QuinaData } from "../../types/QuinaData.ts";
 import '../../assets/css/ConsultaQuina.css';
 
 export function ConsultaQuina() {
-    const API_CAIXA = 'https://servicebus2.caixa.gov.br/portaldeloterias/api/quina';
+    const API_CAIXA = 'http://localhost:8080/aposta/quina';
+    const navigate = useNavigate();
 
     const [errorApi, setErrorApi] = useState(false);
     const [quinaData, setQuinaData] = useState<QuinaData | null>(null);
@@ -20,15 +22,25 @@ export function ConsultaQuina() {
         numero: string;
     }
 
+    const TOKEN = 'Bearer '+ localStorage.getItem('token');
+
     async function handleConsultar() {
-        fetch(API_CAIXA).then(function (response) {
+        fetch(API_CAIXA, {
+            headers: {
+                'Authorization': TOKEN
+            }
+        }).then(function (response) {
             if (response.ok) {
                 setErrorApi(false);
                 return response.json();
+            } else if (response.status === 403) {
+                navigate('/login');
+                return;
             } else {
                 setErrorApi(true);
             }
         }).then(function (data) {
+            console.log(data);
             setQuinaData(data);
             setSorteio(data.numero);
             setUltimoSorteio(data.numero);
@@ -45,10 +57,17 @@ export function ConsultaQuina() {
             return;
         }
 
-        fetch(`${API_CAIXA}/${num}`).then(function (response) {
+        fetch(`${API_CAIXA}/${num}`, {
+            headers: {
+                'Authorization': TOKEN
+            }
+        }).then(function (response) {
             if (response.ok) {
                 setErrorApi(false);
                 return response.json();
+            } else if (response.status === 403) {
+                navigate('/login');
+                return;
             } else {
                 setErrorApi(true);
             }
