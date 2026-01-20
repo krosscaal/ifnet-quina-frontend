@@ -21,6 +21,7 @@ Este projeto é uma aplicação frontend desenvolvida com React e TypeScript par
 Este front-end foi desenvolvido para atuar com  à seguinte aplicação back-end:
 *   **Repositório Back-end:** [infnet-quina-backend](https://github.com/krosscaal/infnet-quina-backend)
 
+**Atenção:** Para testar a aplicação completamente, este projeto(front-end) assim como o projeto relacionado (back-end) devem ser inicializados simultaneamente.
 
 
 
@@ -50,4 +51,13 @@ Este front-end foi desenvolvido para atuar com  à seguinte aplicação back-end
    ```
 
 4. Abra seu navegador e navegue para `http://localhost:5173` (ou a porta exibida no terminal).
+
+## Testando a Aplicação
+
+Para testar a aplicação, use as seguintes credenciais:
+
+- Email: user@gmail.com
+- Senha: 123
+
+Estas credenciais serão adicionadas no banco de dados pela aplicação relacionada (backend).
 
