@@ -1,12 +1,13 @@
 import {useEffect, useState} from 'react';
-import type {Pessoa, PessoaFormData, PessoaRequest} from "../../types/Pessoa.ts";
+import {useLocation, useNavigate} from 'react-router-dom';
+import type {PessoaFormData, PessoaRequest} from "../../types/Pessoa.ts";
 import { Util } from "../utils/Util.ts";
-import { List } from "./Lista.tsx";
 import '../../assets/css/Formulario.css';
 
 
 export function Formulario() {
-    const [pessoa, setPessoa] = useState<Pessoa[] >([]);
+    const location = useLocation();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState<PessoaFormData>({
         nome: '',
         email: '',
@@ -22,31 +23,29 @@ export function Formulario() {
     const API = 'http://localhost:8080/jogador';
     const TOKEN = 'Bearer ' + localStorage.getItem('token');
 
-    // Função para buscar jogadores
-    const fetchJogadores = async () => {
-        try {
-            const response = await fetch(API+'/todos', {
-                headers: {
-                    method: 'GET',
-                    'Authorization': TOKEN
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Falha ao buscar jogadores');
-            }
-            const data: Pessoa[] = await response.json();
-            setPessoa(data);
-        } catch (err) {
-            console.error('Erro ao buscar jogadores:', err);
-        }
-    };
 
-    // Buscar jogadores ao montar o componente
+    // Receber pessoa para edição
     useEffect(() => {
-        fetchJogadores();
-    }, []);
+        if (location.state?.pessoa) {
+            const pessoaToEdit = location.state.pessoa;
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setFormData({
+                nome: pessoaToEdit.nome,
+                email: pessoaToEdit.email,
+                phone: pessoaToEdit.phone,
+                num1: pessoaToEdit.num1,
+                num2: pessoaToEdit.num2,
+                num3: pessoaToEdit.num3,
+                num4: pessoaToEdit.num4,
+                num5: pessoaToEdit.num5,
+            });
+            setEditingId(pessoaToEdit.id);
+        }
+    }, [location.state]);
 
-    // Adicionar nova pessoa
+
+
+    // Adicionar
     const handleAdd = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitted(true);
@@ -84,30 +83,16 @@ export function Formulario() {
                 return response.json();
             })
             .then(() => {
-                fetchJogadores();
                 resetForm();
+                navigate('/home');
             })
             .catch(err => {
                 alert(err.message);
             });
     };
 
-    // Editar pessoa existente
-    const handleEdit = (pessoa: Pessoa) => {
-        setFormData({
-            nome: pessoa.nome,
-            email: pessoa.email,
-            phone: pessoa.phone,
-            num1: pessoa.num1,
-            num2: pessoa.num2,
-            num3: pessoa.num3,
-            num4: pessoa.num4,
-            num5: pessoa.num5,
-        });
-        setEditingId(pessoa.id);
-    };
 
-    // Salvar edição
+    // Editar
     const handleUpdate = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -144,28 +129,14 @@ export function Formulario() {
             return response.json();
         })
             .then(() => {
-            fetchJogadores();
-        })
+                navigate('/home');
+            })
             .catch(err => {
             alert(err.message);
         })
         resetForm();
     };
 
-    // Excluir pessoa
-    const handleDelete = (id: number) => {
-        if (globalThis.confirm('Deseja realmente excluir este registro?')) {
-        }
-        fetch(`${API}/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': TOKEN
-            },
-        }).then(() => {
-            fetchJogadores();
-        });
-    };
 
     // Resetar formulário
     const resetForm = () => {
@@ -191,7 +162,6 @@ export function Formulario() {
             [name]: value
         }));
     };
-
 
 
     return (
@@ -317,25 +287,29 @@ export function Formulario() {
 
                     </div>
                 </div>
-                <div className="format-flex-gap-10">
-                    <button
-                        type="submit" className="btn btn-primary" >{editingId ? 'Atualizar' : 'Adicionar'}</button>
-                    {!editingId && (<button type="button" className="btn btn-secondary" onClick={resetForm}>Limpar</button>)}
-                    {editingId && (
-                        <button
-                            type="button"
-                            className="btn btn-secondary ms-2"
-                            onClick={resetForm}>
-                            Cancelar
+                <div className="format-flex-gap-10" style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{display: 'flex', gap: '10px'}}>
+                        <button type="submit" className="btn btn-primary">
+                            {editingId ? 'Atualizar' : 'Adicionar'}
                         </button>
-                    )}
+                        {!editingId && (
+                            <button type="button" className="btn btn-secondary" onClick={resetForm}>Limpar</button>)}
+                        {editingId && (
+                            <button
+                                type="button"
+                                className="btn btn-secondary ms-2"
+                                onClick={() => navigate('/home')}>
+                                Cancelar
+                            </button>
+                        )}
+                    </div>
+                    <div style={{marginLeft: 'auto'}}>
+                        <button type="button" className="btn btn-secondary" onClick={() => navigate('/home')}>
+                            Voltar
+                        </button>
+                    </div>
                 </div>
             </form>
-            <List
-                pessoa={pessoa}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-            />
         </div>
     );
 

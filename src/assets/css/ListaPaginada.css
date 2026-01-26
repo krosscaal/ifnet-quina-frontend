@@ -1,0 +1,18 @@
+.table-paginada-head {
+    background-color: #f2f2f2;
+}
+
+.table-th {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.table-td {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.table-td-center {
+    text-align: center;
+}
