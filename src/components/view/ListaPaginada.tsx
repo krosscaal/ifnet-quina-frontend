@@ -7,7 +7,7 @@ export function ListaPaginada() {
     const navigate = useNavigate();
     const [pessoas, setPessoas] = useState<Pessoa[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
-    const [itemsPerPage] = useState(2);
+    const [itemsPerPage] = useState(5);
     const [totalElements, setTotalElements] = useState(0);
 
     const API = 'http://localhost:8080/jogador';
